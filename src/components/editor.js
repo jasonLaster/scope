@@ -1,4 +1,7 @@
 import React from "react";
+import "babylon";
+
+import { scopeChain } from "../utils/scopes";
 
 const CodeMirror = require("codemirror");
 require("codemirror/lib/codemirror.css");
@@ -20,7 +23,21 @@ require("codemirror/mode/rust/rust");
 
 window.CodeMirror = CodeMirror;
 
+function renderScope(scope) {
+  const { block, bindings } = scope;
+  return (
+    <div key={scope.uid}>
+      {block.type} -- {Object.keys(bindings).join(", ")}
+    </div>
+  );
+}
+
 export default class Editor extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
+
   componentDidMount() {
     const { source, lineOffsets } = this.props;
 
@@ -39,7 +56,25 @@ export default class Editor extends React.Component {
       lineNumbers: true,
       firstLineNumber: lineOffsets ? lineOffsets.startLocation.line : 1
     });
+
+    const wrapper = this.editor.getWrapperElement();
+    wrapper.addEventListener("click", e => this.onClick(e));
   }
+
+  onClick(e) {
+    const { source } = this.props;
+    const line = this.editor.lineAtHeight(event.clientY) + 1;
+    const scopes = scopeChain(source, { line, column: 0 });
+    this.setState({ scopes });
+  }
+
+  renderScopes() {
+    const { scopes } = this.state;
+    if (!scopes) return null;
+
+    return <div>{scopes.map(scope => renderScope(scope))}</div>;
+  }
+
   render() {
     const { source } = this.props;
     return (
@@ -50,6 +85,7 @@ export default class Editor extends React.Component {
             this.$editor = editor;
           }}
         />
+        {this.renderScopes()}
         />
       </div>
     );
