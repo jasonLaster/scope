@@ -26,8 +26,9 @@ window.CodeMirror = CodeMirror;
 function renderScope(scope) {
   const { block, bindings } = scope;
   return (
-    <div key={scope.uid}>
-      {block.type} -- {Object.keys(bindings).join(", ")}
+    <div className="scope" key={scope.uid}>
+      <div className="type">{block.type}</div>
+      {Object.keys(bindings).join(", ")}
     </div>
   );
 }
@@ -46,7 +47,7 @@ export default class Editor extends React.Component {
       const { startLocation, endLocation } = lineOffsets;
       text = source.text
         .split("\n")
-        .slice(startLocation.line, startLocation.line + endLocation.line)
+        .slice(startLocation.line, endLocation.line)
         .join("\n");
     }
 
@@ -62,8 +63,11 @@ export default class Editor extends React.Component {
   }
 
   onClick(e) {
-    const { source } = this.props;
-    const line = this.editor.lineAtHeight(event.clientY) + 1;
+    const { source, lineOffsets } = this.props;
+    let line = this.editor.lineAtHeight(event.clientY) + 1;
+    if (lineOffsets) {
+      line = line + lineOffsets.startLocation.line;
+    }
     const scopes = scopeChain(source, { line, column: 0 });
     this.setState({ scopes });
   }
