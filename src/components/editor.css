@@ -2,8 +2,22 @@
   margin: 10px 0;
 }
 
+.scope .header {
+  position: relative;
+  color: white;
+  background: #ff00ff;
+  height: 20px;
+  line-height: 20px;
+  font-weight: 500;
+}
+
 .scope .type {
-  font-weight: bold;
+  position: absolute;
+  left: 10px;
+}
+.scope .location {
+  position: absolute;
+  right: 10px;
 }
 
 .editor .CodeMirror {
@@ -28,4 +42,9 @@
   overflow: hidden;
   width: 100%;
   overflow-y: scroll;
+}
+
+.scopes {
+  height: 190px;
+  overflow: scroll;
 }

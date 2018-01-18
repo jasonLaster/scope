@@ -25,12 +25,27 @@ import "./editor.css";
 
 window.CodeMirror = CodeMirror;
 
+function renderBinding(name, value) {
+  const onClick = () => console.log(value);
+  return (
+    <div key={name} onClick={onClick}>
+      {name}
+    </div>
+  );
+}
+
 function renderScope(scope) {
   const { block, bindings } = scope;
+  const location = `line ${block.loc.start.line}`;
   return (
     <div className="scope" key={scope.uid}>
-      <div className="type">{block.type}</div>
-      {Object.keys(bindings).join(", ")}
+      <div className="header">
+        <div className="type">{block.type}</div>
+        <div className="location"> {location}</div>
+      </div>
+      <div className="bindings">
+        {Object.keys(bindings).map(key => renderBinding(key, bindings[key]))}
+      </div>
     </div>
   );
 }
@@ -78,7 +93,9 @@ export default class Editor extends React.Component {
     const { scopes } = this.state;
     if (!scopes) return null;
 
-    return <div>{scopes.map(scope => renderScope(scope))}</div>;
+    return (
+      <div className="scopes">{scopes.map(scope => renderScope(scope))}</div>
+    );
   }
 
   render() {
