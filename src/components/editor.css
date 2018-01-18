@@ -1,0 +1,31 @@
+.scope {
+  margin: 10px 0;
+}
+
+.scope .type {
+  font-weight: bold;
+}
+
+.editor .CodeMirror {
+  height: 100%;
+}
+
+.editor {
+  height: calc(100% - 200px);
+}
+
+.original {
+  grid-area: original;
+  overflow: scroll;
+}
+
+.generated {
+  grid-area: generated;
+  overflow: scroll;
+}
+
+.text {
+  overflow: hidden;
+  width: 100%;
+  overflow-y: scroll;
+}

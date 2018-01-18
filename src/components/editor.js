@@ -21,6 +21,8 @@ require("codemirror/addon/edit/matchbrackets");
 require("codemirror/mode/clike/clike");
 require("codemirror/mode/rust/rust");
 
+import "./editor.css";
+
 window.CodeMirror = CodeMirror;
 
 function renderScope(scope) {
@@ -62,7 +64,7 @@ export default class Editor extends React.Component {
     wrapper.addEventListener("click", e => this.onClick(e));
   }
 
-  onClick(e) {
+  onClick(event) {
     const { source, lineOffsets } = this.props;
     let line = this.editor.lineAtHeight(event.clientY) + 1;
     if (lineOffsets) {
@@ -80,17 +82,16 @@ export default class Editor extends React.Component {
   }
 
   render() {
-    const { source } = this.props;
+    const { source, type } = this.props;
     return (
-      <div>
+      <div className={`${type}`}>
         <div
-          className="editor"
+          className={`editor`}
           ref={editor => {
             this.$editor = editor;
           }}
         />
         {this.renderScopes()}
-        />
       </div>
     );
   }

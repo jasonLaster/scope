@@ -5,7 +5,8 @@ import {
   getOriginalSourceText,
   getGeneratedLocation
 } from "devtools-source-map/src/source-map";
-import Editor from "./components/editor";
+import Editor from "./components/Editor";
+import Header from "./components/Header";
 
 window.getGeneratedLocation = getGeneratedLocation;
 
@@ -49,43 +50,76 @@ async function onClickSource(originalSource, source) {
   render();
 }
 
-function sourcesList(sources) {
-  return sources.map(source => (
-    <div className="source" key={source.id}>
-      <div className="generated-url">{source.url}</div>
-      {source.originalSources
-        .filter(({ url }) => !url.includes("node_module"))
-        .map(originalSource => (
-          <div
-            className="original-url"
-            key={originalSource.id}
-            onClick={() => onClickSource(originalSource, source)}
-          >
-            {originalSource.url}
-          </div>
-        ))}
+function select() {
+  <Select
+    id="state-select"
+    ref={ref => {
+      this.select = ref;
+    }}
+    onBlurResetsInput={false}
+    onSelectResetsInput={false}
+    autoFocus
+    options={options}
+    simpleValue
+    clearable={this.state.clearable}
+    name="selected-state"
+    disabled={this.state.disabled}
+    value={this.state.selectValue}
+    onChange={this.updateValue}
+    rtl={this.state.rtl}
+    searchable={this.state.searchable}
+  />;
+}
+
+function sourcesList(selectedSource, sources) {
+  if (selectedSource) {
+    return null;
+  }
+
+  return (
+    <div>
+      {sources.map(source => (
+        <div className="source" key={source.id}>
+          <div className="generated-url">{source.url}</div>
+          {source.originalSources
+            .filter(({ url }) => !url.includes("node_module"))
+            .map(originalSource => (
+              <div
+                className="original-url"
+                key={originalSource.id}
+                onClick={() => onClickSource(originalSource, source)}
+              >
+                {originalSource.url}
+              </div>
+            ))}
+        </div>
+      ))}
     </div>
-  ));
+  );
 }
 
 function renderSelectedSource(selectedSource) {
   if (!selectedSource) {
-    return null;
+    return [];
   }
   const { originalSource, source, lineOffsets } = selectedSource;
-  return (
-    <div className="sources grid">
-      <Editor source={originalSource} />
-      <Editor source={source} lineOffsets={lineOffsets} />
-    </div>
-  );
+  return [
+    <Editor key="original" type="original" source={originalSource} />,
+    <Editor
+      key="generated"
+      type="generated"
+      source={source}
+      lineOffsets={lineOffsets}
+    />
+  ];
 }
 
 window.render = function render() {
   const { sources, selectedSource } = window.data;
   ReactDOM.render(
-    <div>
-      {sourcesList(sources)}
+    <div className="app">
+      <Header />
+      {sourcesList(selectedSource, sources)}
       {renderSelectedSource(selectedSource)}
     </div>,
     document.getElementById("mount")

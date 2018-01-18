@@ -1,0 +1,15 @@
+header {
+  background: black;
+  grid-area: head;
+}
+
+header h1 {
+  color: white;
+  font-family: sans-serif;
+  line-height: 50px;
+  margin: 0;
+  padding: 0;
+  font-weight: lighter;
+  font-size: 18px;
+  padding-left: 20px;
+}
